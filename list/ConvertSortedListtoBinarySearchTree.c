@@ -50,3 +50,35 @@ struct TreeNode* sortedListToBST(struct ListNode* head) {
     free(mid);
     return node;
 }
+
+
+/**
+ * method 2: using inorder to build tree recursively
+ * The order of add tree node is same as order of node in list. 
+ * In each recursion, we need move head to next, so pointer to pointer
+ * for head is used.
+ * Time: o(logN), Space: o(1)
+ */
+ struct TreeNode *lstToBST(struct ListNode **head, int start, int end);
+ 
+ struct TreeNode* sortedListToBST(struct ListNode* head) {
+    int n = 0;
+    struct ListNode *p = head;
+    
+    while (p != NULL) {n++; p = p->next;}
+    return lstToBST(&head, 0, n-1);
+}
+
+struct TreeNode *lstToBST(struct ListNode **head, int start, int end)
+{
+    if (start > end) return NULL;
+
+    int mid = start + (end - start) / 2;
+    struct TreeNode *left = lstToBST(head, start, mid-1);
+    struct TreeNode *parent = malloc(sizeof(*parent));
+    parent->val = (*head)->val;
+    parent->left = left;
+    *head = (*head)->next; /* move head to next */
+    parent->right = lstToBST(head, mid+1, end);
+    return parent;
+}
