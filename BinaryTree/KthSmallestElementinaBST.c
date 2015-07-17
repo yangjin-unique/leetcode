@@ -47,3 +47,33 @@ int kthSmallest(struct TreeNode* root, int k) {
     free(stack);
     return idx;
 }
+
+/**
+ * method 2: using properties of bst.
+ * if number of nodes in left-subtree greater than (k-1), then the k-th smallest 
+ * must be in left-rubtree;
+ * if number less than (k-1), then k-th node must be in right-subtree.
+ * if equal, root is the one
+ * Time: averag o(logn)
+ */
+int countNodes(struct TreeNode *root)
+ {
+ 	int nl = 0, nr = 0;
+
+ 	if (root == NULL) return 0;
+ 	nl = countNodes(root->left);
+ 	nr = countNodes(root->right);
+ 	return (nl + nr + 1);
+ }
+
+ int kthSmallest(struct TreeNode* root, int k) {
+ 	int n = 0;
+    
+    n = countNodes(root->left);
+ 	if ((k-1) > n)
+ 		return kthSmallest(root->right, k-n-1);
+ 	else if ((k-1) < n)
+ 		return kthSmallest(root->left, k);
+ 	else 
+ 		return root->val;
+ }
