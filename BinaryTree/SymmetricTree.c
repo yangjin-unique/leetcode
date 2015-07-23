@@ -29,6 +29,7 @@ Bonus points if you could solve it both recursively and iteratively.
  */
 
 bool isSymm(struct TreeNode *node1, struct TreeNode *node2) {
+	/* first compare node1 with node2 */
 	if (node1 == NULL || node2 == NULL) {
 		if (node1 != node2) {
 			return 0;
@@ -40,6 +41,7 @@ bool isSymm(struct TreeNode *node1, struct TreeNode *node2) {
 	if (node1->val != node2->val) {
 		return 0;
 	}
+	/* then compare node1->left with node2->right */
 	if (node1->left != NULL && node2->right != NULL) {
 		if (!isSymm(node1->left, node2->right))
 			return 0;
@@ -48,7 +50,7 @@ bool isSymm(struct TreeNode *node1, struct TreeNode *node2) {
 		if (node1->left != node2->right)
 			return 0;
 	}
-
+	/* finally compare node1->right with node2->left */
 	if (node1->right != NULL && node2->left != NULL) {
 		if (!isSymm(node1->right, node2->left))
 			return 0;
