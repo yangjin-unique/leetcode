@@ -59,7 +59,7 @@ void rev(char *start, char *end)
 
     /* remove redunt space */
     while (*p != '\0') {
-        while (*p == ' ' && *(p+1) == ' ') p++;
+        while (*p == ' ' && *(p+1) == ' ') p++; /* skip continuous space */
         if (prev == str && *p == ' ') p++; /* remove a (only one) leading space */
         *prev++ = *p++;
     }
@@ -83,6 +83,6 @@ void reverseWords(char *s)
         }
         end++;
     }
-    rev(start, end-1);
-    rev(s, end-1);
+    rev(start, end-1); /* reverse last word */
+    rev(s, end-1); /* reverse whold string */
 }
