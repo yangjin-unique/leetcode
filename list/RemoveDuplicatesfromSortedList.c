@@ -24,12 +24,10 @@ struct ListNode* deleteDuplicates(struct ListNode* head) {
     	if (prev->val == cur->val) {
     		prev->next = cur->next;
     		free(cur);
-    		cur = prev->next;
+    		cur = prev;
     	}
-    	else {
-    		prev = cur;
-    		cur = cur->next;
-    	}
+    	prev = cur;
+    	cur = cur->next;
     }
     return head;
 }
