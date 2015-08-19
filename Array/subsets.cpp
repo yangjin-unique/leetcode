@@ -36,16 +36,17 @@ public:
         sort(nums.begin(), nums.end());
         vector<int> tmp;
         
-        res.push_back(tmp);
-        for (vector<int>::iterator ite = nums.begin(); ite != nums.end(); ite++) {
+        res.push_back(tmp); /* empty set */
+        for (vector<int>::iterator ite = nums.begin(); ite != nums.end(); ite++) { /* each time add a new element */
         	int size = res.size();
         	for (int i = 0; i < size; i++) {
         		std::vector<int> v;
+                /* clone existed subsets in res */
         		for(vector<int>::iterator j = res[i].begin(); j != res[i].end(); j++) {
-        			v.push_back(*j);
+        			v.push_back(*j); 
         		}
-        		v.push_back(*ite);
-        		res.push_back(v);
+        		v.push_back(*ite); /* add the new element */
+        		res.push_back(v); /* add the new subset to res */
         	}
 
         }
