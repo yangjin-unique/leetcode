@@ -53,13 +53,17 @@ public:
 
 
 /**
- * DFS
+ * DFS, for each element, we choose for left subtree, and not choose for right subtree
+   Example: {1, 2}
+               $
+            /    \
+          1        $
+        /   \    /   \
+      1,2    1  2     $
  */
 class Solution {
 public:
     vector<vector<int>> subsets(vector<int>& nums) {
-        vector<vector<int>> res;
-
         res.clear();
         sort(nums.begin(), nums.end());
         vector<int> tmp;
