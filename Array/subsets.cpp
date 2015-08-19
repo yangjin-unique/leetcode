@@ -48,3 +48,35 @@ public:
         return res;
     }
 };
+
+
+
+
+/**
+ * DFS
+ */
+class Solution {
+public:
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>> res;
+
+        res.clear();
+        sort(nums.begin(), nums.end());
+        vector<int> tmp;
+        int start = 0;
+        
+        dfs(nums, start, tmp);
+        return res;
+    }
+    vector<vector<int>> res;
+    void dfs(vector<int>& nums, int start, std::vector<int>& tmp) {
+        if (start == nums.size()) {
+            res.push_back(tmp);
+            return;
+        }
+        tmp.push_back(nums[start]);
+        dfs(nums, start+1, tmp);
+        tmp.pop_back();
+        dfs(nums, start+1, tmp);
+    }
+};
