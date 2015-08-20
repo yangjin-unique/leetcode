@@ -83,3 +83,35 @@ public:
         dfs(nums, path+1, tmp);
     }
 };
+
+
+
+/**
+ * using bitmap
+*/
+class Solution {
+public:
+    vector<vector<int>> subsets(vector<int>& nums) {
+        unsigned long long bitmap = 0;
+        std::vector<int> v;
+        vector<vector<int>> res;
+        int size = 0;
+        unsigned long long max;
+
+        for (int i = 0; i < nums.size(); i++) {
+            max |= (1 << i);
+        }
+        
+        for (bitmap = 0; bitmap != max; bitmap++) {
+            v.clear();
+            for (int i = 0; i < nums.size(); i++) {
+                if (bitmap & (1 << i)) {
+                    v.push_back(nums[i]);
+                }
+            }
+            res.push_back(v);
+        }
+        res.push_back(nums);
+        return res;
+    }
+};
