@@ -54,7 +54,7 @@ public:
 
 /**
  * DFS, for each element, we choose for left subtree, and not choose for right subtree
-   Example: {1, 2}
+   Example: {1, 2}, $ means null
                $
             /    \
           1        $
