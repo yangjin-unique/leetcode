@@ -87,7 +87,11 @@ public:
 
 
 /**
- * using bitmap
+ * using bitmap, use a unsigned long long integer (total 64 bits), each bit 
+ * represents an element in the set. 1 means the element is placed in the set,
+ * and 0 means not. 
+ * Now let's increse the integer from 0 to 0xff...fff (total bits equal to # of elements
+ * in set), then each value of integer is a subset.
 */
 class Solution {
 public:
@@ -96,8 +100,9 @@ public:
         std::vector<int> v;
         vector<vector<int>> res;
         int size = 0;
-        unsigned long long max;
+        unsigned long long max = 0;
 
+        sort(nums.begin(), nums.end());
         for (int i = 0; i < nums.size(); i++) {
             max |= (1 << i);
         }
