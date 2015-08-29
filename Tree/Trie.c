@@ -4,11 +4,12 @@ Implement a trie with insert, search, and startsWith methods.
 Note:
 You may assume that all inputs are consist of lowercase letters a-z.
 */
+
 #define MAX_NUM_CHILDS		26
+#define KEY_TO_INDEX(c)     ((c) - 'a')
 
 struct TrieNode {
-    char ch;
-    int val;
+    bool flag; /* mark it as it is end */
     struct TrieNode *child[MAX_NUM_CHILDS];
 };
 
@@ -18,71 +19,51 @@ struct TrieNode* trieCreate() {
 
     root = malloc(sizeof(*root));
     memset(root, 0, sizeof(*root));
-    root->ch = '.'; /* root value */
     return root;
 }
 
 /** Inserts a word into the trie. */
 void insert(struct TrieNode* root, char* word) {
-	int i;
+    int index;
 
-    for (i = 0; i < MAX_NUM_CHILDS; i++) {
-    	if (root->child[i] && root->child[i]->ch == *word)
-    		break;
-    }
-    if (i != MAX_NUM_CHILDS) {
-    	if (*word != '\0') 
-    		insert(root->child[i], word+1);
+    if (*word != '\0') {
+        index = KEY_TO_INDEX(*word);
+        if (!root->child[index]) {
+            root->child[index] = malloc(sizeof(struct TrieNode));
+    	    if (root->child[index] == NULL) {
+    		    printf("malloc failed\n");
+    		    return;
+    	        }
+    	    memset(root->child[index], 0, sizeof(struct TrieNode));   
+        }
+        insert(root->child[index], word+1); 
     }
     else {
-    	for (i = 0; i < MAX_NUM_CHILDS; i++) {
-    		if (!root->child[i])
-    			break;
-    	}
-    	root->child[i] = malloc(sizeof(struct TrieNode));
-    	if (root->child[i] == NULL) {
-    		printf("malloc failed\n");
-    		return;
-    	}
-    	memset(root->child[i], 0, sizeof(struct TrieNode));
-    	root->child[i]->ch = *word;
-    	if (*word != '\0')
-    		insert(root->child[i], word+1);
+        root->flag = 1; /* mark it as end */
     }
 }
 
 /** Returns if the word is in the trie. */
 bool search(struct TrieNode* root, char* word) {
-    int i;
+    int index;
 
-    if (!word) return false;
-
-    for (i = 0; i < MAX_NUM_CHILDS; i++) {
-    	if (root->child[i] && root->child[i]->ch == *word) {
-    		if (*word == '\0')
-    			return true;
-    		else
-    			return search(root->child[i], word+1);
-    	}
-    }
-    return false;
+    if (!word || !root) return false;
+    if (*word == '\0' && root->flag)
+        return true;
+    index = KEY_TO_INDEX(*word);
+    return search(root->child[index], word+1);
 }
 
 /** Returns if there is any word in the trie 
     that starts with the given prefix. */
 bool startsWith(struct TrieNode* root, char* prefix) {
-    int i;
+    int index;
 
     if (!prefix || *prefix == '\0') return true;
-    for (i = 0; i < MAX_NUM_CHILDS; i++) {
-    	if (root->child[i] && root->child[i]->ch == *prefix) {
-    		if (*(prefix+1) == '\0')
-    			return true;
-    		else
-    			return startsWith(root->child[i], prefix+1);
-    	}
-    }
-    return false;
+
+    index = KEY_TO_INDEX(*prefix);
+    if (!root->child[index]) return false;
+    return startsWith(root->child[index], prefix+1);
 }
 
 /** Deallocates memory previously allocated for the TrieNode. */
@@ -103,3 +84,4 @@ void trieFree(struct TrieNode* root) {
 // insert(node, "somestring");
 // search(node, "key");
 // trieFree(node);
+//
