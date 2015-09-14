@@ -85,3 +85,94 @@ void trieFree(struct TrieNode* root) {
 // search(node, "key");
 // trieFree(node);
 //
+
+
+
+/**
+ * iteration method
+ */
+#define MAX_NUM_CHILDS		26
+#define KEY_TO_INDEX(c)     ((c) - 'a')
+
+struct TrieNode {
+    bool flag; /* mark it as it is end */
+    struct TrieNode *child[MAX_NUM_CHILDS];
+};
+
+/** Initialize your data structure here. */
+struct TrieNode* trieCreate() {
+    struct TrieNode *root;
+
+    root = malloc(sizeof(*root));
+    memset(root, 0, sizeof(*root));
+    return root;
+}
+
+/** Inserts a word into the trie. */
+void insert(struct TrieNode* root, char* word) {
+    int index, i;
+
+    int len;
+    struct TrieNode *node = root; 
+    
+    if (!word || *word == '\0') return;
+    len = strlen(word);
+    for (i = 0; i < len; i++) {
+        index = KEY_TO_INDEX(word[i]);    
+        if (!node->child[index]) {
+            root->child[index] = malloc(sizeof(struct TrieNode));
+            memset(root->child[index], 0, sizeof(struct TrieNode));
+            
+        }
+        node = root->child[index];
+    }
+    node->flag = 1; /* mark as the end */
+
+}
+
+/** Returns if the word is in the trie. */
+bool search(struct TrieNode* root, char* word) {
+    int index, i;
+    int len;
+    struct TrieNode *node = root;
+
+	if (!word || *word == '\0') return false;
+    len = strlen(word);
+    for (i= 0; i < len; i++) {
+        index = KEY_TO_INDEX(word[i]);
+        node = node->child[index]; 
+        if (!node) return false;
+    }
+    if (node->flag) return true;
+    return false;
+}
+
+/** Returns if there is any word in the trie 
+    that starts with the given prefix. */
+bool startsWith(struct TrieNode* root, char* prefix) {
+    int index, i;
+    int len;
+    struct TrieNode *node = root;
+
+    if (!prefix || *prefix == '\0') return true;
+    len = strlen(prefix);
+    for (i = 0; i < len; i++) {
+       index = KEY_TO_INDEX(prefix[i]); 
+       node = node->child[index];
+       if (!node) return false;
+    }
+    return true;
+}
+
+/** Deallocates memory previously allocated for the TrieNode. */
+void trieFree(struct TrieNode* root) {
+    int i;
+
+    if (!root) return;
+    for (i = 0; i < MAX_NUM_CHILDS; i++) {
+    	if (root->child[i]) {
+    		trieFree(root->child[i]);
+    	}
+    }
+    free(root);
+}
