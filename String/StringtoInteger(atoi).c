@@ -25,7 +25,7 @@ int myAtoi(char* str) {
 	    p++;
 	}
 	
-	while (*p != '\0' && *p >= '0' && *p <= '9') {
+	while (*p >= '0' && *p <= '9') {
 		res = res*10 + (*p - '0');
 		if (!neg && res > MAX) return MAX;
 		if (neg && -res <  MIN) return MIN;
