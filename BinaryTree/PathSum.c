@@ -115,3 +115,62 @@ class Solution(object):
         if root.left == None and root.right == None:
         	return sum == root.val;
         return self.hasPathSum(root.left, sum - root.val) or self.hasPathSum(root.right, sum - root.val);
+
+
+/**
+ * c++ solution
+ */
+ /**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool hasPathSum(TreeNode* root, int sum) {
+        std::vector<TreeNode *> stack;
+        std::vector<TreeNode *> aux_stack;
+        TreeNode *node = NULL;
+        int total = 0; 
+
+        while (root != NULL) {
+        	stack.push_back(root);
+        	total += root->val;
+        	root = root->left;
+        }
+
+        while (!stack.empty()) {
+        	node = stack.back();
+        	stack.pop_back();
+        	if (isLeafNode(node)) {
+        		if (sum == total)
+        			return true;
+        	}
+        	if (node->right != NULL && !aux_stack.empty() && node == aux_stack.back()) {
+        		aux_stack.pop_back();
+        		total -= node->val;
+        	}
+        	else if (node->right != NULL) {
+        		stack.push_back(node);
+        		aux_stack.push_back(node);
+        		node = node->right;
+        		while (node != NULL) {
+        			stack.push_back(node);
+        			total += node->val;
+        			node = node->left;
+        		}
+        	}
+        	else {
+        		total -= node->val;
+        	}
+        }
+        return false;
+    }
+    bool isLeafNode(struct TreeNode *node) {
+		return (node->left == NULL) && (node->right == NULL);
+	}
+};
