@@ -43,7 +43,9 @@ public:
                 res.push_back(res[i]); /* clone existed subset */
                 res.back().push_back(*ite); /* add the new element */
             }
-
+	    if (res.size() == res.back().size()) {
+	    	res.push_back(*it);
+	    }
         }
         return res;
     }
