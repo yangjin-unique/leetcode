@@ -5,6 +5,8 @@ get(key) - Get the value (will always be positive) of the key if the key exists 
 set(key, value) - Set or insert the value if the key is not already present. When the cache reached its capacity, it should invalidate the least recently used item before inserting a new item.
 */
 
+
+/* use hash table and double linked list */
 typedef struct cache_elem_s {
 	int key;
 	int value; 
@@ -13,7 +15,7 @@ typedef struct cache_elem_s {
 	struct cache_elem_s *hlist;
 } cache_elem_t;
 
-#define HASH_SIZE		512
+#define HASH_SIZE	1024	
 
 typedef struct cache_s {
 	cache_elem_t head;
@@ -22,11 +24,14 @@ typedef struct cache_s {
 	int count;
 } cache_t;
 
-cache_t g_cache_list = {
+cache_t g_cache_list;
+#if 0
+{
 	.head = {0, 0, &g_cache_list.head, &g_cache_list.head, NULL},
 	.capacity = 0,
 	.count = 0,
 };
+#endif
 
 int hashKey(int val) {
 	return (val % HASH_SIZE);
@@ -105,6 +110,8 @@ void list_add_tail(cache_elem_t *head, cache_elem_t *elem) {
 void list_del(cache_elem_t *elem) {
 	elem->prev->next = elem->next;
 	elem->next->prev = elem->prev;
+    elem->prev = NULL;
+    elem->next = NULL;
 }
 
 /**
@@ -134,7 +141,8 @@ void lruCacheSet(int key, int value) {
 		
 		if (g_cache_list.count < g_cache_list.capacity) {
 			/* append to cache list */
-			elem = malloc(sizeof(cache_elem_t));
+			elem = (cache_elem_t *) malloc(sizeof(cache_elem_t));
+            memset(elem, 0, sizeof(cache_elem_t));
 			elem->key = key;
 			elem->value = value;
 			/* insert elem into tail */
@@ -149,6 +157,7 @@ void lruCacheSet(int key, int value) {
 			htbl_find(elem->key, 1);
 			elem->key = key;
 			elem->value = value;
+            elem->hlist = NULL;
 			list_add_tail(&g_cache_list.head, elem);
 			htbl_add(elem);
 		}
