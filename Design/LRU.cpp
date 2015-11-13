@@ -173,3 +173,103 @@ void lruCacheSet(int key, int value) {
 		elem->value = value;
 	}
 }
+
+
+
+/***********************************************************************/
+/**
+ * Method 2: using doule linked list and stl unordered_map
+ */
+typedef struct CacheElem {
+    struct CacheElem *prev;
+    struct CacheElem *next;
+    int key;
+    int value;
+}CacheElem_t;
+
+class LRUCache {
+    CacheElem_t head;
+    int capacity;
+    int count;
+    unordered_map<int, CacheElem_t *> cache_map;
+public:
+    LRUCache(int capacity): capacity(capacity), count(0) {
+        head.prev = head.next = &head;
+        head.key = head.value = -1;
+    }
+
+    int getCount() {return count; }
+
+    int get(int key) {
+        CacheElem_t *elem = NULL;
+        unordered_map<int, CacheElem_t*>::iterator got = cache_map.find(key); 
+        if (got != cache_map.end()) {
+            elem = got->second;
+            list_del(elem);
+            list_add_tail(&head, elem);
+            return elem->value;
+        }
+        return -1;
+    }
+
+    void set(int key, int value) {
+        CacheElem_t *elem = NULL;
+        pair<int, CacheElem_t*> m(-1, NULL);
+        unordered_map<int, CacheElem_t*>::const_iterator got;
+
+        got = cache_map.find(key);
+        if (got == cache_map.end()) {
+            /* not found */
+            if (count >= capacity) {
+                /* cache full, so select the head of list as the eviction */
+                elem = head.next;
+                cache_map.erase(elem->key); /* remove the evicted and deleted key */
+                elem->key = key;
+                elem->value = value;
+                if (elem != head.prev) {
+                    list_del(elem);
+                    list_add_tail(&head, elem);
+                }
+            }
+            else {
+                /* cache not full, alloc a new one */
+                elem = new CacheElem_t;
+                elem->key = key;
+                elem->value = value;
+                list_add_tail(&head, elem);
+                count++;
+            }
+            assert(elem);
+            /* add the new key map to cache_map */
+            m.first = key;
+            m.second = elem;
+            cache_map.insert(m);
+        }
+        else {
+            /* found one, then update it, and move it to tail of list */ 
+            elem = got->second;
+            elem->value = value;
+            if (elem != head.prev) {
+                /* elem not in tail, move elem to tail of list */
+                assert(elem);
+                list_del(elem);
+                list_add_tail(&head, elem);
+            }
+        }
+    }
+    /* double linked list */
+    void list_add_tail(CacheElem_t *head, CacheElem_t *elem) {
+	    elem->next = head;
+        elem->prev = head->prev;
+        elem->prev->next = elem;
+        head->prev = elem;
+    }
+
+    void list_del(CacheElem_t *elem) {
+	    elem->prev->next = elem->next;
+	    elem->next->prev = elem->prev;
+        elem->prev = NULL;
+        elem->next = NULL;
+    }
+
+};
